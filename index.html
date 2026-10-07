@@ -383,7 +383,7 @@ const root=document.documentElement;
 function setTheme(t){root.setAttribute('data-theme',t);store.set('ayush-theme',t);$('#dTheme').textContent=t;const m=$('meta[name="theme-color"]');if(m)m.content=t==='dark'?'#0E1020':'#ECEEF8';}
 setTheme(store.get('ayush-theme')==='light'?'light':'dark');
 $('#themeBtn').addEventListener('click',()=>setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark'));
-function tick(){const d=new Date();$('#clock').textContent=d.toLocaleDateString([], {weekday:'short',day:'numeric',month:'short'})+'  '+d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});}
+function tick(){const d=new Date();$('#clock').innerHTML='<span class="d">'+esc(d.toLocaleDateString([], {weekday:'short',day:'numeric',month:'short'}))+'&nbsp; </span>'+esc(d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}));}
 tick();setInterval(tick,30000);
 
 /* ---------- boot ---------- */
@@ -554,6 +554,9 @@ function renderCareer(){
     $('#cfPrev').addEventListener('click',()=>go(-1));$('#cfNext').addEventListener('click',()=>go(1));
     cf.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'){e.preventDefault();go(-1);}if(e.key==='ArrowRight'){e.preventDefault();go(1);}});
     cards.forEach((c,i)=>c.addEventListener('click',()=>{cfIdx=i;layout();}));
+    let sx=null;
+    cf.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});
+    cf.addEventListener('touchend',e=>{if(sx===null)return;const dx=e.changedTouches[0].clientX-sx;sx=null;if(Math.abs(dx)>40)go(dx<0?1:-1);},{passive:true});
     layout();
     if(!cf._ro&&'ResizeObserver' in window){cf._ro=new ResizeObserver(layout);cf._ro.observe(cf);}
   }
